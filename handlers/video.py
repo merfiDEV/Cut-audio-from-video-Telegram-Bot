@@ -14,6 +14,7 @@ from utils.file_manager import (
     get_temp_path,
     cleanup_temp_files,
 )
+from utils.runtime_stats import increment_conversion
 
 logger = logging.getLogger(__name__)
 
@@ -151,6 +152,8 @@ async def handle_format_selection(callback: CallbackQuery) -> None:
                 document=audio_file,
                 caption=caption,
             )
+
+        increment_conversion(format_name)
 
         cleanup_temp_files(input_path, converted_path)
         logger.debug("Временные файлы удалены")

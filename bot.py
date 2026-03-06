@@ -10,8 +10,9 @@ from aiogram.filters import ExceptionTypeFilter
 from aiogram.types import ErrorEvent
 
 from config import BOT_TOKEN, TEMP_DIR
-from handlers import start, video
+from handlers import start, stats, video
 from utils.file_manager import ensure_temp_dir
+from utils.runtime_stats import mark_start, increment_error
 
 logging.basicConfig(
     level=logging.INFO,
@@ -30,6 +31,7 @@ logger = logging.getLogger(__name__)
 
 async def on_startup() -> None:
     logger.info("Бот запускается...")
+    mark_start()
     ensure_temp_dir()
     logger.info("Временная директория готова")
 
@@ -39,6 +41,7 @@ async def on_shutdown() -> None:
 
 
 async def global_error_handler(event: ErrorEvent) -> None:
+    increment_error()
     logger.error(
         f"Глобальная ошибка: {event.exception}",
         exc_info=event.exception,
@@ -58,6 +61,7 @@ def create_dispatcher() -> Dispatcher:
     dp = Dispatcher()
 
     dp.include_router(start.router)
+    dp.include_router(stats.router)
     dp.include_router(video.router)
 
     dp.error.register(global_error_handler, ExceptionTypeFilter(Exception))
@@ -87,6 +91,7 @@ async def main() -> None:
     except KeyboardInterrupt:
         logger.info("Получен сигнал остановки (KeyboardInterrupt)")
     except Exception as e:
+        increment_error()
         logger.error(f"Критическая ошибка: {e}", exc_info=True)
     finally:
         await bot.session.close()
@@ -99,5 +104,6 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         logger.info("Бот остановлен пользователем")
     except Exception as e:
+        increment_error()
         logger.critical(f"Фатальная ошибка: {e}", exc_info=True)
         sys.exit(1)
