@@ -2,9 +2,12 @@
 
 [![Platform](https://img.shields.io/badge/platform-windows%20%7C%20linux%20%7C%20macos-2ea44f?style=flat-square)](https://dotnet.microsoft.com/)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512bd4?style=flat-square)](https://dotnet.microsoft.com/)
+[![C#](https://img.shields.io/badge/C%23-512bd4?style=flat-square&logo=csharp&logoColor=white)](https://learn.microsoft.com/dotnet/csharp/)
 [![Telegram](https://img.shields.io/badge/Telegram-Bot-2ca5e0?style=flat-square&logo=telegram)](https://t.me/)
 [![FFmpeg](https://img.shields.io/badge/FFmpeg-Required-007808?style=flat-square&logo=ffmpeg)](https://ffmpeg.org/)
 [![License](https://img.shields.io/badge/License-MIT-4cc61e?style=flat-square)](LICENSE)
+
+[![Попробовать в Telegram](https://img.shields.io/badge/Попробовать%20бота-@Spmoderbot__bot-2ca5e0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/Spmoderbot_bot)
 
 Open source Telegram-бот для извлечения аудио из видео. Поддерживает обычные видео, видео-заметки (кружки) и видеодокументы.
 
@@ -15,6 +18,17 @@ Open source Telegram-бот для извлечения аудио из виде
 - 📁 Поддержка видеодокументов
 - 📊 Команда `/stats` (только администратор)
 - 🎵 **Поддерживаемые форматы:** MP3, WAV, OGG, M4A
+
+## ✅ Плюсы бота
+
+| Плюс | Описание |
+|---|---|
+| ⚡ Быстрая конвертация | Оптимизированный пайплайн на FFmpeg с прозрачными логами |
+| 📁 Универсальная поддержка | Видео, кружки и видеодокументы в одном обработчике |
+| 🎯 Четкий выбор формата | Удобные inline-кнопки для MP3/WAV/OGG/M4A |
+| 🧠 Статистика администратора | /stats с аптаймом, ошибками и счетчиками |
+| 🧹 Чистый temp | Авто-очистка временных файлов после отправки |
+| 🧩 Легко развивать | Четкая структура и разделение по слоям |
 
 ## 🧰 Требования
 

@@ -49,3 +49,6 @@ RULES.MD
 # Temp
 temp/
 *.tmp
+## C# build artifacts
+csharp-bot/bin/
+csharp-bot/obj/
