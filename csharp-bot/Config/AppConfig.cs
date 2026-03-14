@@ -19,11 +19,21 @@ public static class AppConfig
     public static IReadOnlyDictionary<string, FormatConfig> AvailableFormats { get; } =
         new Dictionary<string, FormatConfig>(StringComparer.OrdinalIgnoreCase)
         {
-            ["mp3"] = new("MP3", "libmp3lame", "192k"),
-            ["wav"] = new("WAV", "pcm_s16le", null),
-            ["ogg"] = new("OGG", "libvorbis", "160k"),
-            ["m4a"] = new("M4A", "aac", "192k"),
+            ["mp3"]  = new("🎵 MP3",  "libmp3lame", "192k"),
+            ["wav"]  = new("🔊 WAV",  "pcm_s16le",  null),
+            ["ogg"]  = new("🎙 OGG",  "libvorbis",  "160k"),
+            ["m4a"]  = new("🍎 M4A",  "aac",        "192k"),
+            ["flac"] = new("💎 FLAC", "flac",        null),
+        };
+
+    public static IReadOnlyDictionary<string, Mp3BitrateConfig> Mp3Bitrates { get; } =
+        new Dictionary<string, Mp3BitrateConfig>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["128"] = new("128 kbps — эконом",  "128k"),
+            ["192"] = new("192 kbps — стандарт","192k"),
+            ["320"] = new("320 kbps — максимум","320k"),
         };
 }
 
 public sealed record FormatConfig(string Label, string Codec, string? Bitrate);
+public sealed record Mp3BitrateConfig(string Label, string Bitrate);

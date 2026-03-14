@@ -14,14 +14,12 @@ public sealed class UpdateDispatcher
         switch (update.Type)
         {
             case UpdateType.Message:
-                if (update.Message is null)
-                {
-                    return;
-                }
+                if (update.Message is null) return;
 
                 if (!string.IsNullOrWhiteSpace(update.Message.Text))
                 {
                     var text = update.Message.Text.Trim();
+
                     if (text.StartsWith("/start", StringComparison.OrdinalIgnoreCase))
                     {
                         await StartHandler.HandleAsync(bot, update.Message, ct);
@@ -31,6 +29,12 @@ public sealed class UpdateDispatcher
                     if (text.StartsWith("/stats", StringComparison.OrdinalIgnoreCase))
                     {
                         await StatsHandler.HandleAsync(bot, update.Message, ct);
+                        return;
+                    }
+
+                    if (text.StartsWith("/help", StringComparison.OrdinalIgnoreCase))
+                    {
+                        await StartHandler.HandleAsync(bot, update.Message, ct);
                         return;
                     }
                 }
@@ -45,11 +49,25 @@ public sealed class UpdateDispatcher
                 break;
 
             case UpdateType.CallbackQuery:
-                if (update.CallbackQuery is not null &&
-                    !string.IsNullOrWhiteSpace(update.CallbackQuery.Data) &&
-                    update.CallbackQuery.Data.StartsWith("format_", StringComparison.OrdinalIgnoreCase))
+                var cb = update.CallbackQuery;
+                if (cb is null || string.IsNullOrWhiteSpace(cb.Data)) break;
+
+                if (cb.Data.StartsWith("format_", StringComparison.OrdinalIgnoreCase))
                 {
-                    await VideoHandler.HandleFormatSelectionAsync(bot, update.CallbackQuery, ct);
+                    await VideoHandler.HandleFormatSelectionAsync(bot, cb, ct);
+                    break;
+                }
+
+                if (cb.Data.StartsWith("bitrate_", StringComparison.OrdinalIgnoreCase))
+                {
+                    await VideoHandler.HandleBitrateSelectionAsync(bot, cb, ct);
+                    break;
+                }
+
+                if (cb.Data.Equals("back_to_formats", StringComparison.OrdinalIgnoreCase))
+                {
+                    await VideoHandler.HandleBackToFormatsAsync(bot, cb, ct);
+                    break;
                 }
 
                 break;

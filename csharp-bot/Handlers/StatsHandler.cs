@@ -25,23 +25,25 @@ public static class StatsHandler
         var formatCounts = RuntimeStats.GetFormatCounts();
 
         var text =
-            "📊 Статистика бота\n\n" +
-            $"⏱ Время работы: {FormatUptime()}\n" +
-            $"✅ Всего конвертаций: {RuntimeStats.GetConversionCount()}\n\n" +
-            "📦 По форматам:\n" +
-            $"   MP3: {formatCounts.GetValueOrDefault("mp3", 0)}\n" +
-            $"   WAV: {formatCounts.GetValueOrDefault("wav", 0)}\n" +
-            $"   OGG: {formatCounts.GetValueOrDefault("ogg", 0)}\n" +
-            $"   M4A: {formatCounts.GetValueOrDefault("m4a", 0)}\n\n" +
-            $"🗓 Дата запуска: {startTime}\n" +
-            "---\n" +
-            $"⚠️ Ошибок: {RuntimeStats.GetErrorCount()}\n" +
-            "---\n" +
-            "[ admin only ]";
+            "📊 <b>Статистика бота</b>\n" +
+            "━━━━━━━━━━━━━━━━━\n\n" +
+            $"⏱ Аптайм: <b>{FormatUptime()}</b>\n" +
+            $"✅ Конвертаций всего: <b>{RuntimeStats.GetConversionCount()}</b>\n\n" +
+            "📦 <b>По форматам:</b>\n" +
+            $"  🎵 MP3:  {formatCounts.GetValueOrDefault("mp3", 0)}\n" +
+            $"  🔊 WAV:  {formatCounts.GetValueOrDefault("wav", 0)}\n" +
+            $"  🎙 OGG:  {formatCounts.GetValueOrDefault("ogg", 0)}\n" +
+            $"  🍎 M4A:  {formatCounts.GetValueOrDefault("m4a", 0)}\n" +
+            $"  💎 FLAC: {formatCounts.GetValueOrDefault("flac", 0)}\n\n" +
+            $"🗓 Запущен: <b>{startTime}</b>\n" +
+            "━━━━━━━━━━━━━━━━━\n" +
+            $"⚠️ Ошибок: <b>{RuntimeStats.GetErrorCount()}</b>\n" +
+            "<i>[ admin only ]</i>";
 
         await bot.SendMessage(
             chatId: message.Chat.Id,
             text: text,
+            parseMode: Telegram.Bot.Types.Enums.ParseMode.Html,
             cancellationToken: ct);
     }
 

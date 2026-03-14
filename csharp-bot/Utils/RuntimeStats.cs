@@ -16,6 +16,7 @@ public static class RuntimeStats
             new KeyValuePair<string, int>("wav", 0),
             new KeyValuePair<string, int>("ogg", 0),
             new KeyValuePair<string, int>("m4a", 0),
+            new KeyValuePair<string, int>("flac", 0),
         },
         StringComparer.OrdinalIgnoreCase);
 

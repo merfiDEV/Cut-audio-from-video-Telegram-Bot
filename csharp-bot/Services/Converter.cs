@@ -21,12 +21,15 @@ public static class Converter
         string inputPath,
         string outputPath,
         string formatName,
-        CancellationToken cancellationToken)
+        string? bitrate = null,
+        CancellationToken cancellationToken = default)
     {
         if (!AppConfig.AvailableFormats.TryGetValue(formatName, out var formatConfig))
         {
             throw new ConverterError($"Неподдерживаемый формат: {formatName}");
         }
+
+        var effectiveBitrate = bitrate ?? formatConfig.Bitrate;
 
         var args = new List<string>
         {
@@ -35,15 +38,15 @@ public static class Converter
             "-acodec", formatConfig.Codec
         };
 
-        if (!string.IsNullOrWhiteSpace(formatConfig.Bitrate))
+        if (!string.IsNullOrWhiteSpace(effectiveBitrate))
         {
-            args.AddRange(new[] { "-b:a", formatConfig.Bitrate! });
+            args.AddRange(new[] { "-b:a", effectiveBitrate! });
         }
 
         args.AddRange(new[] { "-y", outputPath });
 
-        SimpleLogger.Info($"Запуск конвертации: {inputPath} -> {outputPath} (формат: {formatName})");
-        SimpleLogger.Debug($"FFmpeg команда: ffmpeg {string.Join(" ", args)}");
+        SimpleLogger.Info($"Convert: {inputPath} -> {outputPath} [{formatName}, {effectiveBitrate ?? "lossless"}]");
+        SimpleLogger.Debug($"FFmpeg args: {string.Join(" ", args)}");
 
         try
         {
@@ -57,15 +60,11 @@ public static class Converter
             };
 
             foreach (var arg in args)
-            {
                 psi.ArgumentList.Add(arg);
-            }
 
             using var process = Process.Start(psi);
             if (process is null)
-            {
-                throw new ConverterError("Не удалось запустить FFmpeg процесс");
-            }
+                throw new ConverterError("Не удалось запустить FFmpeg");
 
             using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(AppConfig.FfmpegTimeout));
             using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, cancellationToken);
@@ -76,45 +75,33 @@ public static class Converter
             }
             catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested)
             {
-                try
-                {
-                    process.Kill(true);
-                }
-                catch
-                {
-                    // ignore
-                }
-
-                SimpleLogger.Error($"Таймаут при конвертации файла: {inputPath}");
+                try { process.Kill(true); } catch { }
+                SimpleLogger.Error($"FFmpeg timeout: {inputPath}");
                 throw new ConverterError($"Таймаут конвертации ({AppConfig.FfmpegTimeout} сек)");
             }
 
             if (process.ExitCode != 0)
             {
-                SimpleLogger.Error($"Ошибка FFmpeg: код {process.ExitCode}");
+                var stderr = await process.StandardError.ReadToEndAsync(cancellationToken);
+                SimpleLogger.Error($"FFmpeg exit {process.ExitCode}: {stderr}");
                 throw new ConverterError($"FFmpeg вернул код {process.ExitCode}");
             }
 
             if (!File.Exists(outputPath))
-            {
-                throw new ConverterError("Выходной файл не был создан");
-            }
+                throw new ConverterError("Выходной файл не создан");
 
-            SimpleLogger.Info($"Конвертация успешно завершена: {outputPath}");
+            SimpleLogger.Info($"Conversion OK: {outputPath}");
             return outputPath;
         }
         catch (Win32Exception)
         {
-            SimpleLogger.Error("FFmpeg не найден. Убедитесь, что FFmpeg установлен и добавлен в PATH.");
+            SimpleLogger.Error("FFmpeg not found in PATH");
             throw new ConverterError("FFmpeg не найден. Установите FFmpeg и добавьте его в PATH.");
         }
-        catch (ConverterError)
-        {
-            throw;
-        }
+        catch (ConverterError) { throw; }
         catch (Exception ex)
         {
-            SimpleLogger.Error($"Неожиданная ошибка при конвертации: {ex}", ex);
+            SimpleLogger.Error($"Unexpected conversion error: {ex}", ex);
             throw new ConverterError($"Ошибка конвертации: {ex.Message}");
         }
     }

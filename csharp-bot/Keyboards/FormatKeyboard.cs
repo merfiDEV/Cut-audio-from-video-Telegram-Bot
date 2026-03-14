@@ -11,21 +11,17 @@ public static class FormatKeyboard
         {
             new[]
             {
-                InlineKeyboardButton.WithCallbackData(
-                    AppConfig.AvailableFormats["mp3"].Label,
-                    "format_mp3"),
-                InlineKeyboardButton.WithCallbackData(
-                    AppConfig.AvailableFormats["wav"].Label,
-                    "format_wav")
+                InlineKeyboardButton.WithCallbackData("🎵 MP3",  "format_mp3"),
+                InlineKeyboardButton.WithCallbackData("🔊 WAV",  "format_wav"),
             },
             new[]
             {
-                InlineKeyboardButton.WithCallbackData(
-                    AppConfig.AvailableFormats["ogg"].Label,
-                    "format_ogg"),
-                InlineKeyboardButton.WithCallbackData(
-                    AppConfig.AvailableFormats["m4a"].Label,
-                    "format_m4a")
+                InlineKeyboardButton.WithCallbackData("🎙 OGG",  "format_ogg"),
+                InlineKeyboardButton.WithCallbackData("🍎 M4A",  "format_m4a"),
+            },
+            new[]
+            {
+                InlineKeyboardButton.WithCallbackData("💎 FLAC (без потерь)", "format_flac"),
             }
         });
     }
